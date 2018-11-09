@@ -19,20 +19,19 @@
 (defn userName [] (.-name (.-identity scatter_js)))
 (defn publicKey [] (.-publicKey (.-identity scatter_js)))
 
-; Generate EOS actions
-;
+;; Push EOS actions
+;;
 (def tokenDetails #js {:contract "eosio.token" :symbol "EOS" :memo "heelloo", :decimals 4})
 (defn requestTransfer [to amount] (-> (.requestTransfer scatter_js network to amount tokenDetails)(.then #(.log js/console "result" %))))
 ;(defn requestTransfer [to amount] (.requestTransfer scatter_js network to amount tokenDetails))
 
 (def transactionData #js {:id "random-id" :origin "EOS Mail" :blockchain "eos" :actions #js [{:contract "eosio.token" :action "transfer" :params #js ["eosnavigator" "eosio" "0.0001 EOS" ""]}]})
-(defn createTransaction [] (-> (.log js/console (.createTransaction scatter_js transactionData))))
+(defn createTransaction [] (.log js/console (.createTransaction scatter_js transactionData)))
                                ;(.then #(.log js/console "trans result" %))))
 
-; Probably not needed at all
-;(defn loadPlugin [] (.loadPlugin scatter_js scatter_eos))
+;; Probably not needed at all
+;; (defn loadPlugin [] (.loadPlugin scatter_js scatter_eos))
 
-;;
 ;;  API to get info
 ;;
 (defn getPublicKey [blockchain] (-> (.getPublicKey scatter_js)
@@ -49,22 +48,21 @@
 (defn getInfo [] (-> (.getInfo eosapi {})
                      (.then #(.log js/console "info" %))))
 
-;
-; What to do when connected to scatter
-;
+;; What to do when connected to scatter
+;;
 
 (defn connected [identity]
   (.log js/console "Connected to Scatter...")
   (.log js/console "account" (userName))
   (.log js/console "pubKey" (publicKey))
-  (aset js/window "ScatterJS" "null"))
-  ;(.log js/console "getInfo" (getInfo))
-  ;(.log js/console "getBlock" (getBlock 1))
-  ;(.log js/console "getAccount" (getAccount "eosnavigator"))
-  ;(.log js/console "getBalance" (getCurrencyBalance "EOS" "eosio.token" "eosnavigator"))
-  ;(.log js/console "getBalance" (getCurrencyBalance "DICE" "betdicetoken" "eosnavigator"))
-  ;(.log js/console "getActions" (getActions "eosnavigator"))
-  ;(requestTransfer "ikhalilsofia" 0.0001))
+  (aset js/window "ScatterJS" "null")
+  (.log js/console "getInfo" (getInfo))
+  (.log js/console "getBlock" (getBlock 1))
+  (.log js/console "getAccount" (getAccount "eosnavigator"))
+  (.log js/console "getBalance" (getCurrencyBalance "EOS" "eosio.token" "eosnavigator"))
+  (.log js/console "getBalance" (getCurrencyBalance "DICE" "betdicetoken" "eosnavigator"))
+  (.log js/console "getActions" (getActions "eosnavigator"))
+  (requestTransfer "ikhalilsofia" 0.0001))
   ;(createTransaction))
 
 ;;
@@ -73,6 +71,9 @@
 (def requiredFields #js {:accounts #js [network]})
 (defn connect_scatter [name] (-> (.connect scatter_js name)(.then #(.suggestNetwork scatter_js network))(.then #(.getIdentity scatter_js requiredFields))(.then #(connected %))))
 
+;; Main
+;;
+;;
 (defn main! []
   (println "Started!")
   ;(.log js/console "network" network)
